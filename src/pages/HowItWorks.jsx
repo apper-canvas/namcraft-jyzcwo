@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import getIcon from '../utils/iconUtils';
-import { Link } from 'react-router-dom';
 
 const HowItWorks = () => {
   // Icon components
