@@ -1,42 +1,42 @@
 import { useState } from 'react';
-import { toast } from 'react-toastify';
 import { generateAppNames } from '../utils/nameGeneratorUtils';
+import { toast } from 'react-toastify';
 
-/**
- * Custom hook to handle name generation logic
- */
 const useNameGenerator = () => {
   const [description, setDescription] = useState('');
-  const [nameResults, setNameResults] = useState([]);
+  const [nameResult, setNameResult] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [currentSeed, setCurrentSeed] = useState(null);
-  const [seedHistory, setSeedHistory] = useState([]);
 
-  /**
-   * Generate names based on description and seed
-   * @param {boolean} useSameSeed - Whether to use the same seed or generate a new one
-   */
-  const generateNames = (useSameSeed = false) => {
+  const generateNames = async (useSameSeed = false) => {
     if (!description.trim()) {
-      toast.error("Please enter a description first!");
+      toast.warning('Please enter a description for your app.');
       return;
     }
-    
+
     setIsGenerating(true);
-    
-    // Determine which seed to use
+
+    // Use either the existing seed or generate a new one
     const seed = useSameSeed && currentSeed ? currentSeed : Date.now();
-    
-    // Store seed in history if it's new
-    if (!useSameSeed || !currentSeed) {
-      setCurrentSeed(seed);
-      setSeedHistory(prev => [...prev.slice(-9), seed]); // Keep last 10 seeds
+    setCurrentSeed(seed);
+
+    try {
+      // Simulate an API call with a short delay
+      await new Promise(resolve => setTimeout(resolve, 1200));
+      const result = generateAppNames(description, seed);
+      setNameResult(result);
+    } catch (error) {
+      toast.error('Failed to generate name. Please try again.');
+      console.error('Name generation error:', error);
+    } finally {
+      setIsGenerating(false);
     }
-    
-    // Simulate API delay
-    setTimeout(() => {
-      try {
-        const newNames = generateAppNames(description, seed);
+  };
+
+  return { description, setDescription, nameResult, isGenerating, generateNames, currentSeed };
+};
+
+export default useNameGenerator;
         setNameResults(newNames);
         toast.success("Name ideas generated successfully!");
       } catch (error) {

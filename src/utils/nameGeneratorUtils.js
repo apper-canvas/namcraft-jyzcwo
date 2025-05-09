@@ -34,10 +34,9 @@ const compounds = ['Lab', 'Hub', 'Net', 'Flow', 'Wave', 'Forge', 'Stack', 'Box',
  * Generates app names based on a description using a seeded random generator
  * @param {string} description - The description of the app
  * @param {number} seed - The seed for random generation
- * @param {number} count - Number of names to generate
- * @returns {Array} Array of name objects
+ * @returns {Object} A single name object
  */
-export const generateAppNames = (description, seed = Date.now(), count = 12) => {
+export const generateAppNames = (description, seed = Date.now()) => {
   // Initialize the seeded random generator
   const random = new SeededRandom(seed);
   
@@ -53,42 +52,35 @@ export const generateAppNames = (description, seed = Date.now(), count = 12) => 
     keywords.push(random.choice(prefixes));
   }
   
-  // Generate random names using the extracted keywords and word banks
-  const newNames = [];
+  // Get a random keyword or prefix to work with
+  const keyword = random.choice(keywords) || random.choice(prefixes);
+  const prefix = random.choice(prefixes);
+  const suffix = random.choice(suffixes);
+  const compound = random.choice(compounds);
+  let name = '';
+  let category = '';
   
-  // Create different types of names
-  for (let i = 0; i < count; i++) {
-    const keyword = random.choice(keywords) || random.choice(prefixes);
-    const prefix = random.choice(prefixes);
-    const suffix = random.choice(suffixes);
-    const compound = random.choice(compounds);
-    
-    let name = '';
-    let category = '';
-    
-    // Different name generation patterns
-    const pattern = random.nextInt(0, 4);
-    switch (pattern) {
-      case 0: name = keyword + suffix; category = 'catchy'; break;
-      case 1: name = prefix + keyword; category = 'tech'; break;
-      case 2: name = keyword + compound; category = 'professional'; break;
-      case 3: name = compound + keyword.toLowerCase(); category = 'creative'; break;
-      case 4: name = prefix + suffix; category = 'catchy'; break;
-      default: name = keyword + 'App'; category = 'tech';
-    }
-    
-    // Add to results if not duplicate
-    if (!newNames.some(n => n.name === name)) {
-      newNames.push({
-        id: seed + i,
-        name,
-        category,
-        relevanceScore: random.nextInt(70, 99), // 70-99 relevance score
-        generatedAt: new Date().toISOString(), // Record generation timestamp
-        seed // Store the seed used for generation
-      });
+  // Different name generation patterns
+  const pattern = random.nextInt(0, 4);
+  switch (pattern) {
+    case 0: name = keyword + suffix; category = 'catchy'; break;
+    case 1: name = prefix + keyword; category = 'tech'; break;
+    case 2: name = keyword + compound; category = 'professional'; break;
+    case 3: name = compound + keyword.toLowerCase(); category = 'creative'; break;
+    case 4: name = prefix + suffix; category = 'catchy'; break;
+    default: name = keyword + 'App'; category = 'tech';
     } else { i--; } // Try again if duplicate
   }
+  // Create a single name object
+  const nameObject = {
+    id: seed,
+    name,
+    category,
+    relevanceScore: random.nextInt(85, 99), // Higher relevance score for single result (85-99)
+    generatedAt: new Date().toISOString(), // Record generation timestamp
+    seed // Store the seed used for generation
+  };
   
+  return nameObject;
   return newNames;
 };
