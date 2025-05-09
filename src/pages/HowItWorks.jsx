@@ -82,10 +82,10 @@ const HowItWorks = () => {
           >
           
           <div className="mt-8 text-center">
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              Try it yourself
-              Try it yourself
-            </Link>
+              <Link to="/" className="inline-flex items-center text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light transition-colors">
+                <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                Try it yourself
+              </Link>
           </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-6 flex items-center">
               <BrainIcon className="h-7 w-7 mr-2 text-primary" />
