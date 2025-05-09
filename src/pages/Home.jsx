@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import MainFeature from '../components/MainFeature';
 import getIcon from '../utils/iconUtils';
 
@@ -18,6 +19,7 @@ const Home = () => {
   // Icon components
   const WandIcon = getIcon('Wand');
   const GithubIcon = getIcon('Github');
+  const InfoIcon = getIcon('Info');
   
   return (
     <div className="min-h-screen">
@@ -37,6 +39,17 @@ const Home = () => {
             
             <nav>
               <ul className="flex space-x-6">
+                <li>
+                  <Link 
+                    to="/how-it-works" 
+                    className="flex items-center text-surface-600 dark:text-surface-300 hover:text-primary dark:hover:text-primary-light transition-colors"
+                  >
+                    <InfoIcon className="h-5 w-5 mr-1" />
+                    <span className="hidden md:inline">
+                      How It Works
+                    </span>
+                  </Link>
+                </li>
                 <li>
                   <a 
                     href="https://github.com" 

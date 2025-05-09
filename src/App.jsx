@@ -7,6 +7,7 @@ import getIcon from './utils/iconUtils';
 // Pages
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import HowItWorks from './pages/HowItWorks';
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -48,6 +49,7 @@ function App() {
       </motion.button>
       
       <Routes>
+        <Route path="/how-it-works" element={<HowItWorks />} />
         <Route path="/" element={<Home />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
