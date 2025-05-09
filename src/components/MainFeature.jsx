@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
+import useNameGenerator from '../hooks/useNameGenerator';
 import getIcon from '../utils/iconUtils';
 
 const MainFeature = () => {
-  const [description, setDescription] = useState('');
-  const [nameResults, setNameResults] = useState([]);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const { description, setDescription, nameResults, isGenerating, generateNames, currentSeed } = useNameGenerator();
   const [isCopied, setIsCopied] = useState(null);
   
   // Icon components declaration (BEFORE return statement)
@@ -20,6 +19,7 @@ const MainFeature = () => {
   const ZapIcon = getIcon('Zap');
   const BrainIcon = getIcon('Brain');
   const RocketIcon = getIcon('Rocket');
+  const InfoIcon = getIcon('Info');
   
   // Reset copy states after a timeout
   useEffect(() => {
@@ -40,91 +40,6 @@ const MainFeature = () => {
     { id: 'creative', name: 'Creative', icon: HeartIcon },
     { id: 'professional', name: 'Professional', icon: RocketIcon }
   ];
-  
-  // Helper to generate domain style names based on description
-  const generateNames = () => {
-    if (!description.trim()) {
-      toast.error("Please enter a description first!");
-      return;
-    }
-    
-    setIsGenerating(true);
-    
-    // Simulating API call with timeout
-    setTimeout(() => {
-      // Word bank related to app naming
-      const prefixes = ['App', 'Web', 'Net', 'Dev', 'Tech', 'Code', 'Byte', 'Bit', 'Digi', 'Cyber', 'Data', 'Flow', 'Sync', 'Swift', 'Pulse', 'Node', 'Logic', 'Smart', 'Clear', 'Fast'];
-      const suffixes = ['ly', 'ify', 'ize', 'ium', 'ible', 'able', 'ics', 'hub', 'lab', 'tech', 'ware', 'edge', 'wire', 'sync', 'spot', 'dash', 'base', 'port', 'cast', 'lift'];
-      const compounds = ['Lab', 'Hub', 'Net', 'Flow', 'Wave', 'Forge', 'Stack', 'Box', 'Link', 'Craft', 'Sphere', 'Mind', 'Cloud', 'Connect', 'Space', 'Works', 'Zone', 'Logic', 'Ware', 'Engine'];
-      
-      // Extract keywords from description
-      const keywords = description.toLowerCase()
-        .replace(/[^\w\s]/gi, '')
-        .split(' ')
-        .filter(word => word.length > 3)
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1));
-      
-      // Generate random names using the extracted keywords and word banks
-      const newNames = [];
-      
-      // Create different types of names
-      for (let i = 0; i < 12; i++) {
-        const keyword = keywords[Math.floor(Math.random() * keywords.length)] || prefixes[Math.floor(Math.random() * prefixes.length)];
-        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-        const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-        const compound = compounds[Math.floor(Math.random() * compounds.length)];
-        
-        let name = '';
-        let category = '';
-        
-        // Different name generation patterns
-        const pattern = Math.floor(Math.random() * 5);
-        switch (pattern) {
-          case 0:
-            name = keyword + suffix;
-            category = 'catchy';
-            break;
-          case 1:
-            name = prefix + keyword;
-            category = 'tech';
-            break;
-          case 2:
-            name = keyword + compound;
-            category = 'professional';
-            break;
-          case 3:
-            name = compound + keyword.toLowerCase();
-            category = 'creative';
-            break;
-          case 4:
-            name = prefix + suffix;
-            category = 'catchy';
-            break;
-          default:
-            name = keyword + 'App';
-            category = 'tech';
-        }
-        
-        // Add to results if not duplicate
-        if (!newNames.some(n => n.name === name)) {
-          newNames.push({
-            id: Date.now() + i,
-            name,
-            category,
-            relevanceScore: Math.floor(Math.random() * 30) + 70 // 70-99 relevance score
-          });
-        } else {
-          // Try again if duplicate
-          i--;
-        }
-      }
-      
-      setNameResults(newNames);
-      setIsGenerating(false);
-      toast.success("Name ideas generated successfully!");
-    }, 1500);
-  };
-  
   // Copy name to clipboard
   const copyToClipboard = (name, id) => {
     navigator.clipboard.writeText(name).then(() => {
@@ -158,6 +73,13 @@ const MainFeature = () => {
             className="input-field h-32 resize-none"
             disabled={isGenerating}
           />
+          {currentSeed && (
+            <div className="mt-2 text-xs flex items-center text-surface-500 dark:text-surface-400">
+              <InfoIcon className="w-3.5 h-3.5 mr-1" />
+              <span>Generation seed: {currentSeed}</span>
+              <span className="ml-2">(Results are reproducible with this seed)</span>
+            </div>
+          )}
         </div>
         
         <div className="flex flex-wrap gap-4 mb-6">
@@ -184,7 +106,7 @@ const MainFeature = () => {
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={generateNames}
+            onClick={() => generateNames(false)} // Generate with new seed
             disabled={isGenerating || !description.trim()}
             className={`btn flex-1 flex items-center justify-center ${
               isGenerating || !description.trim()
@@ -209,7 +131,7 @@ const MainFeature = () => {
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              onClick={generateNames}
+              onClick={() => generateNames(true)} // Regenerate with same seed
               disabled={isGenerating}
               className={`btn flex items-center justify-center ${
                 isGenerating
@@ -252,11 +174,16 @@ const MainFeature = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
           >
             <h3 className="text-xl md:text-2xl font-semibold mb-6 flex items-center">
               <StarIcon className="h-6 w-6 mr-2 text-primary" />
               Name Suggestions
+              {currentSeed && (
+                <span className="text-sm font-normal text-surface-500 dark:text-surface-400 ml-2">
+                  (Seed: {currentSeed})
+                </span>
+              )}
               <span className="ml-2 text-sm font-normal text-surface-500 dark:text-surface-400">
                 ({filteredResults.length} results)
               </span>
@@ -295,7 +222,7 @@ const MainFeature = () => {
                           ></div>
                         </div>
                         <span className="ml-2 text-xs text-surface-500 dark:text-surface-400">
-                          {result.relevanceScore}%
+                          {result.relevanceScore}% match
                         </span>
                       </div>
                       
@@ -316,6 +243,10 @@ const MainFeature = () => {
                             <span>Copy</span>
                           </>
                         )}
+                      
+                      <div className="mt-2 text-xs text-surface-400 dark:text-surface-500">
+                        Generated on {new Date(result.generatedAt || Date.now()).toLocaleString()}
+                      </div>
                       </motion.button>
                     </motion.div>
                   </motion.div>

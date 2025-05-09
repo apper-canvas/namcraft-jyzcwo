@@ -1,12 +1,15 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import getIcon from '../utils/iconUtils';
+import { Link } from 'react-router-dom';
 
 const HowItWorks = () => {
   // Icon components
   const WandIcon = getIcon('Wand');
   const ArrowLeftIcon = getIcon('ArrowLeft');
   const BrainIcon = getIcon('Brain');
+  const SeedIcon = getIcon('Sprout');
+  const ClockIcon = getIcon('Clock');
   const DatabaseIcon = getIcon('Database');
   const LayersIcon = getIcon('Layers');
   const RefreshCwIcon = getIcon('RefreshCw');
@@ -33,6 +36,29 @@ const HowItWorks = () => {
 
           <motion.div
             initial={{ opacity: 0, y: -20 }}
+              
+              <h4 className="text-lg font-medium flex items-center mt-6 mb-3">
+                <SeedIcon className="h-5 w-5 mr-2 text-secondary" /> Seeded Generation
+              </h4>
+              <p className="mb-4">We use a technique called <span className="font-medium">seeded random generation</span> to create app names. Here's how it works:</p>
+              
+              <ul className="list-disc pl-6 mb-4 space-y-2">
+                <li>Each name generation session uses a unique "seed" value based on the current timestamp</li>
+                <li>This seed ensures that the same input and seed will always produce the same set of names</li>
+                <li>You can regenerate with the same seed to get variations on your current results</li>
+                <li>Or generate with a new seed for completely different naming patterns</li>
+              </ul>
+              
+              <h4 className="text-lg font-medium flex items-center mt-6 mb-3">
+                <ClockIcon className="h-5 w-5 mr-2 text-secondary" /> Timestamp Integration
+              </h4>
+              <p className="mb-4">The timestamp when you request name generation becomes part of the process:</p>
+              
+              <ul className="list-disc pl-6 mb-4 space-y-2">
+                <li>The exact millisecond of your request creates a unique seed value</li>
+                <li>This ensures no two generation sessions are identical (unless using the same seed)</li>
+                <li>Each generated name records its creation timestamp, allowing you to track when it was created</li>
+              </ul>
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="text-center"
@@ -42,6 +68,7 @@ const HowItWorks = () => {
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gradient">How NamCraft Works</h1>
             <p className="text-surface-600 dark:text-surface-300 text-lg md:text-xl max-w-3xl mx-auto">
+                <li><span className="font-medium">Deterministic Generation:</span> Uses the timestamp-based seed to ensure reproducible results.</li>
               Discover the magic behind our app name generation algorithm and how we create the perfect name for your project.
             </p>
           </motion.div>
@@ -55,6 +82,13 @@ const HowItWorks = () => {
             {...fadeIn}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
+          
+          <div className="mt-8 text-center">
+            <Link to="/" className="btn btn-primary inline-flex items-center">
+              <getIcon.ArrowLeft className="h-5 w-5 mr-2" />
+              Try it yourself
+            </Link>
+          </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-6 flex items-center">
               <BrainIcon className="h-7 w-7 mr-2 text-primary" />
               The Naming Philosophy
