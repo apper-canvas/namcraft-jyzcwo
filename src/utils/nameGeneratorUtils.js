@@ -69,7 +69,6 @@ export const generateAppNames = (description, seed = Date.now()) => {
     case 3: name = compound + keyword.toLowerCase(); category = 'creative'; break;
     case 4: name = prefix + suffix; category = 'catchy'; break;
     default: name = keyword + 'App'; category = 'tech';
-    } else { i--; } // Try again if duplicate
   }
   // Create a single name object
   const nameObject = {
@@ -82,5 +81,4 @@ export const generateAppNames = (description, seed = Date.now()) => {
   };
   
   return nameObject;
-  return newNames;
 };
